@@ -153,7 +153,7 @@
             <button class="button" onclick="appendNumber(7)">7</button>
             <button class="button" onclick="appendNumber(8)">8</button>
             <button class="button" onclick="appendNumber(9)">9</button>
-            <button class="button" onclick="appendOperator('x')">×</button>
+            <button class="button" onclick="appendOperator('X')">×</button>
 
             <!-- Third Row -->
             <button class="button" onclick="appendNumber(4)">4</button>
@@ -236,7 +236,7 @@
 
         function calculate() {
             try {
-                currentInput = eval(currentInput.replace("÷", "/").replace("x", "*")).toString();
+                currentInput = eval(currentInput.replace("÷", "/").replace("X", "*")).toString();
                 shouldResetDisplay = true;
 
                 // Auto-scroll to the leftmost position after calculation to show the full result
