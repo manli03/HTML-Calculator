@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUM-Themed Calculator</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Soft Background Color */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #517ca7;
+            /* Light blue-gray background */
+            color: #333;
+        }
+
+        /* Calculator Container */
+        .calculator {
+            background-color: #ffffff;
+            padding: 30px 20px;
+            border-radius: 20px;
+            border: 4px solid #D3D3D3;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 330px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .calculator:hover {
+            border-color: #002366;
+            /* Change border color on hover to a darker blue */
+        }
+
+
+        /* Display Screen */
+        .display {
+            background: #e9e9e9;
+            border-radius: 10px;
+            font-size: 2.5rem;
+            padding: 15px;
+            text-align: right;
+            margin-bottom: 20px;
+            color: #333;
+            height: 70px;
+            display: block;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            letter-spacing: 1px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            width: 100%;
+            max-width: 100%;
+            word-wrap: normal;
+        }
+
+        /* Custom scrollbar styling */
+        .display::-webkit-scrollbar {
+            width: 8px;
+            /* Set the width of the scrollbar */
+            height: 8px;
+            /* Set the height for horizontal scrollbar */
+        }
+
+        .display::-webkit-scrollbar-thumb {
+            background-color: #003399;
+            /* Blue thumb color */
+            border-radius: 10px;
+            /* Rounded thumb */
+            border: 2px solid #fff;
+            /* Add a border to make it pop */
+        }
+
+        .display::-webkit-scrollbar-track {
+            background-color: rgba(0, 0, 0, 0.1);
+            /* Light background for track */
+            border-radius: 10px;
+            /* Round track edges */
+        }
+
+
+
+        /* Buttons Grid */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        /* Individual Button Style */
+        .button {
+            background: #003399;
+            /* UUM Blue */
+            color: #ffffff;
+            font-size: 1.4rem;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Button Hover Effect */
+        .button:hover {
+            background: #002366;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Special Buttons */
+        .button.clear {
+            background: #FFD700;
+            /* UUM Yellow */
+            color: #003399;
+        }
+
+        .button.equals {
+            background: #FFD700;
+            /* UUM Yellow */
+            color: #003399;
+            grid-column: span 2;
+        }
+
+        /* Animation on Button Click */
+        .button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <div id="display" class="display">0</div>
+        <div class="buttons">
+            <!-- First Row -->
+            <button class="button clear" onclick="clearDisplay()">C</button>
+            <button class="button" onclick="deleteLast()">DEL</button>
+            <button class="button" onclick="appendOperator('%')">%</button>
+            <button class="button" onclick="appendOperator('÷')">÷</button>
+
+            <!-- Second Row -->
+            <button class="button" onclick="appendNumber(7)">7</button>
+            <button class="button" onclick="appendNumber(8)">8</button>
+            <button class="button" onclick="appendNumber(9)">9</button>
+            <button class="button" onclick="appendOperator('x')">×</button>
+
+            <!-- Third Row -->
+            <button class="button" onclick="appendNumber(4)">4</button>
+            <button class="button" onclick="appendNumber(5)">5</button>
+            <button class="button" onclick="appendNumber(6)">6</button>
+            <button class="button" onclick="appendOperator('-')">−</button>
+
+            <!-- Fourth Row -->
+            <button class="button" onclick="appendNumber(1)">1</button>
+            <button class="button" onclick="appendNumber(2)">2</button>
+            <button class="button" onclick="appendNumber(3)">3</button>
+            <button class="button" onclick="appendOperator('+')">+</button>
+
+            <!-- Fifth Row -->
+            <button class="button" onclick="appendNumber(0)">0</button>
+            <button class="button" onclick="appendDot()">.</button>
+            <button class="button equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById("display");
+        let currentInput = "0";
+        let shouldResetDisplay = false;
+
+        function updateDisplay() {
+            display.innerText = currentInput;
+            // Auto-scroll to the rightmost position to show the latest content
+            if (!shouldResetDisplay) {
+                display.scrollLeft = display.scrollWidth;
+            }
+        }
+
+        function clearDisplay() {
+            currentInput = "0";
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = "0";
+            }
+            updateDisplay();
+        }
+
+        function appendNumber(number) {
+            if (currentInput === "0" || shouldResetDisplay) {
+                currentInput = number.toString();
+                shouldResetDisplay = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            if (shouldResetDisplay) {
+                shouldResetDisplay = false;
+            }
+            if (/[\+\-\*\/]$/.test(currentInput)) {
+                currentInput = currentInput.slice(0, -1);
+            }
+            currentInput += operator;
+            updateDisplay();
+        }
+
+        function appendDot() {
+            if (shouldResetDisplay) {
+                currentInput = "0";
+                shouldResetDisplay = false;
+            }
+            if (!currentInput.includes(".")) {
+                currentInput += ".";
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                currentInput = eval(currentInput.replace("÷", "/").replace("x", "*")).toString();
+                shouldResetDisplay = true;
+
+                // Auto-scroll to the leftmost position after calculation to show the full result
+                display.scrollLeft = 0;
+            } catch (error) {
+                currentInput = "Error";
+                shouldResetDisplay = true;
+            }
+            updateDisplay();
+        }
+
+        // Keyboard event listener
+        document.addEventListener("keydown", function (event) {
+            const key = event.key;
+
+            if (/[0-9]/.test(key)) {
+                appendNumber(parseInt(key));
+            } else if (key === ".") {
+                appendDot();
+            } else if (key === "+" || key === "-" || key === "*" || key === "/") {
+                appendOperator(key);
+            } else if (key === "Enter" || key === "=") {
+                calculate();
+            } else if (key === "Backspace") {
+                deleteLast();
+            } else if (key === "Escape") {
+                clearDisplay();
+            }
+        });
+    </script>
+</body>
+
+</html>
